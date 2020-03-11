@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta lang="en-us" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <h1 id="title">United States Educational Attainment</h1>
+        <h2 id="description">Percentage of adults age 25 and older with a bachelor's degree or higher (2010-2014)</h2>
+    </body>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+    <script>
+        async function runAsync() {
+            const geoData = await fetch('https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json')
+            .then(res => res.json())
+            .catch(err => console.log(err))
+
+            const educationData = await fetch('https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json')
+            .then(res => res.json())
+            .catch(err => console.log(err))
+
+
+        }
+        runAsync();
+    </script>
+</html>
