@@ -7,6 +7,7 @@
     <body>
         <h1 id="title">United States Educational Attainment</h1>
         <h2 id="description">Percentage of adults age 25 and older with a bachelor's degree or higher (2010-2014)</h2>
+        <div id="d3render"></div>
     </body>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
@@ -20,8 +21,37 @@
             .then(res => res.json())
             .catch(err => console.log(err))
 
+            console.log(geoData.objects.counties.geometries);
+
+            const svg = d3.select("#d3render")
+            .append('svg')
+            .attr('id', 'map')
+            .attr('width', 900)
+            .attr('height', 600)
+            .style('background-color', 'white')
+            
+            // svg.append('g')
+            // .selectAll('path')
+            // .data(geoData.objects.counties.geometries)
+            // .join('path')
+            // .attr('d', d3.geoPath())
+            // .attr('fill', 'blue')
+
+            // svg.append('path')
+            // .datum(geoData.objects.counties.geometries)
+            // .attr('fill', 'blue')
+
+            svg.append("path")
+            .datum({type: "GeometryCollection", features: geoData.objects.counties.geometries })
+            .attr("d", d3.geoPath());
+
+            svg.selectAll("path")
+            .data(geoData.objects.counties.geometries)
+            .enter().append("path")
+            .attr("d", d3.geoPath());
 
         }
         runAsync();
+
     </script>
 </html>
