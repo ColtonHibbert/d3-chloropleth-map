@@ -10,45 +10,79 @@
         <div id="d3render"></div>
     </body>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
     <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
     <script>
         async function runAsync() {
+            const prac = await fetch('https://unpkg.com/world-atlas@1.1.4/world/110m.json')
+            .then(data => {
+                return data.json()
+            })
+            console.log(prac)
+
+            
+            const pracCountries = topojson.feature(prac, prac.objects.countries);
+            console.log(pracCountries);
+
+ 
             const geoData = await fetch('https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json')
             .then(res => res.json())
             .catch(err => console.log(err))
 
             const educationData = await fetch('https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json')
             .then(res => res.json())
-            .catch(err => console.log(err))
+            .catch(err => console.log(err)) 
 
-            console.log(geoData.objects.counties.geometries);
+            const width = 960;
+            const height = 500;
 
             const svg = d3.select("#d3render")
             .append('svg')
             .attr('id', 'map')
-            .attr('width', 900)
-            .attr('height', 600)
+            .attr('width', width)
+            .attr('height', height)
             .style('background-color', 'white')
-            
-            // svg.append('g')
-            // .selectAll('path')
-            // .data(geoData.objects.counties.geometries)
-            // .join('path')
-            // .attr('d', d3.geoPath())
-            // .attr('fill', 'blue')
+
+            //const projection = d3.geoMercator();
+            const projection = d3.geoAlbersUsa()
+            .scale(1000)
+            .translate([width/ 2, height /2 ])
+            const pathGenerator = d3.geoPath().projection(projection);
+
+
+            //prac
+            // const paths = svg.selectAll('path')
+            // .data(pracCountries.features);
+            // paths.enter().append('path')
+            // .attr('d', d => {
+            //     console.log('d in prac', d)
+            //     console.log('prac pathgen d', pathGenerator(d))
+            //     return pathGenerator(d)
+            // })
+
+
+        
+            const counties = await topojson.feature(geoData, geoData.objects.counties); 
+            console.log(counties)
+
+            const paths = svg.selectAll('path')
+            .data(counties.features)
+           
+
+            paths.enter().append('path')
+            .attr('d', d => {
+                console.log('d in counties', d)
+                console.log('pathgen d',pathGenerator(d))
+                return pathGenerator(d)
+                
+            })
+            //.attr('fill', 'blue')
 
             // svg.append('path')
-            // .datum(geoData.objects.counties.geometries)
+            // .datum(topojson.feature(geoData, geoData.objects.counties.geometries))
+            // .attr('d', pathGenerator())
             // .attr('fill', 'blue')
 
-            svg.append("path")
-            .datum({type: "GeometryCollection", features: geoData.objects.counties.geometries })
-            .attr("d", d3.geoPath());
-
-            svg.selectAll("path")
-            .data(geoData.objects.counties.geometries)
-            .enter().append("path")
-            .attr("d", d3.geoPath());
 
         }
         runAsync();
